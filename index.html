@@ -1,11 +1,110 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-   <meta charset="UTF-8">
-   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <title>Document</title>
-</head>
-<body>
-   
-</body>
+   <head>
+      <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+      <link rel="stylesheet" href="style.css" />
+      <link
+         rel="stylesheet"
+         href="node_modules/bootstrap-icons/font/bootstrap-icons.css"
+      />
+      <title>Word Party Game</title>
+   </head>
+   <body>
+      <main class="game">
+         <h1>Word Party Game</h1>
+         <div class="scores">
+            <div class="team team1">
+               <h2>TEAM 1</h2>
+               <span id="team1_score" title="Team 1 score">0</span>
+            </div>
+            <div class="team team2">
+               <h2>TEAM 2</h2>
+               <span id="team2_score" title="Team 2 score">0</span>
+            </div>
+         </div>
+         <div class="timer">
+            <span id="time_remaining">60</span>
+         </div>
+
+         <section id="home">
+            <label for="category">
+               <h2>Category</h2>
+               <input type="radio" name="category" value="Urban Dictionary" />
+               <input type="radio" name="category" value="Food" />
+               <input type="radio" name="category" value="Everything" />
+               <input type="radio" name="category" value="Phrases" />
+            </label>
+
+            <label for="game_duration">
+               <h2><span id="game_duration_label">60</span> seconds</h2>
+               <input
+                  name="game_duration"
+                  type="range"
+                  min="30"
+                  max="120"
+                  value="60"
+               />
+            </label>
+
+            <label for="points_to_win">
+               <h2>Points to win: <span id="points_to_win_label">6</span></h2>
+               <input type="range" min="3" max="12" value="6" />
+            </label>
+
+            <button class="button-primary" id="start_game">Start</button>
+            <button class="button-secondary" id="how_to_play">
+               How to Play
+            </button>
+
+            <span class="game-settings">
+               <button class="button-icon" id="restart_game">
+                  <i class="bi-arrow-clockwise"></i>
+               </button>
+            </span>
+         </section>
+
+         <section id="game">
+            <h2>Category</h2>
+            <h3>Urban Dictionary</h3>
+
+            <div class="card">
+               <p id="current_word">Apple</p>
+               <button class="button-icon" id="pause_game">
+                  <i class="bi-pause"></i>
+               </button>
+            </div>
+
+            <div class="buttons">
+               <button class="button-primary button-black" id="skip_word">
+                  Skip
+               </button>
+               <button class="button-primary" id="next_word">
+                  Next <i class="bi-fast-forward-fill"></i>
+               </button>
+            </div>
+
+            <button class="button-secondary" id="end_round">End Round</button>
+         </section>
+
+         <section id="round_end">
+            <div class="card">
+               <h2>Time's Up!</h2>
+               <ul id="used_words">
+                  <li>Apple</li>
+                  <li>Lentil Soup</li>
+               </ul>
+            </div>
+
+            <label for="winner">
+               <h3>Who Won?</h3>
+               <input type="radio" name="winner" value="1" />Team 1
+               <input type="radio" name="winner" value="2" />Team 2
+            </label>
+
+            <button class="button-secondary">Next Round</button>
+         </section>
+      </main>
+   </body>
 </html>
