@@ -4,7 +4,7 @@
       <meta charset="UTF-8" />
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-      <link rel="stylesheet" href="style.css" />
+      <link rel="stylesheet" href="styles/style.css" />
       <link
          rel="stylesheet"
          href="node_modules/bootstrap-icons/font/bootstrap-icons.css"
@@ -29,13 +29,27 @@
          </div>
 
          <section id="home">
-            <label for="category">
+            <div>
                <h2>Category</h2>
-               <input type="radio" name="category" value="Urban Dictionary" />
-               <input type="radio" name="category" value="Food" />
-               <input type="radio" name="category" value="Everything" />
-               <input type="radio" name="category" value="Phrases" />
-            </label>
+               <span class="categories">
+                  <label>
+                     <input type="radio" name="category" value="Urban Dictionary" />
+                     <div class="button-radio">Urban Dictionary</div>
+                  </label>
+                  <label>
+                     <input type="radio" name="category" value="Food" />
+                     <div class="button-radio">Food</div>
+                  </label>
+                  <label>
+                     <input type="radio" name="category" value="Everything" />
+                     <div class="button-radio">Everything</div>
+                  </label>
+                  <label>
+                     <input type="radio" name="category" value="Phrases" />
+                     <div class="button-radio">Phrases</div>
+                  </label>
+               </span>
+            </div>
 
             <label for="game_duration">
                <h2><span id="game_duration_label">60</span> seconds</h2>
@@ -45,6 +59,7 @@
                   min="30"
                   max="120"
                   value="60"
+                  step="15"
                />
             </label>
 
@@ -53,10 +68,12 @@
                <input type="range" min="3" max="12" value="6" />
             </label>
 
-            <button class="button-primary" id="start_game">Start</button>
-            <button class="button-secondary" id="how_to_play">
-               How to Play
-            </button>
+            <div class="buttons">
+               <button class="button-primary" id="start_game">Start</button>
+               <button class="button-secondary" id="how_to_play">
+                  How to Play
+               </button>
+            </div>
 
             <span class="game-settings">
                <button class="button-icon" id="restart_game">
@@ -66,8 +83,10 @@
          </section>
 
          <section id="game">
-            <h2>Category</h2>
-            <h3>Urban Dictionary</h3>
+            <span>
+               <h2>Category</h2>
+               <h3>Urban Dictionary</h3>
+            </span>
 
             <div class="card">
                <p id="current_word">Apple</p>
@@ -85,7 +104,11 @@
                </button>
             </div>
 
-            <button class="button-secondary" id="end_round">End Round</button>
+            <span>
+               <button class="button-secondary" id="end_round">
+                  End Round
+               </button>
+            </span>
          </section>
 
          <section id="round_end">
@@ -97,13 +120,24 @@
                </ul>
             </div>
 
-            <label for="winner">
+            <div>
                <h3>Who Won?</h3>
-               <input type="radio" name="winner" value="1" />Team 1
-               <input type="radio" name="winner" value="2" />Team 2
-            </label>
 
-            <button class="button-secondary">Next Round</button>
+               <span class="winner">
+                  <label>
+                     <input type="radio" name="winner" value="1" />
+                     <div class="button-radio">Team 1</div>
+                  </label>
+                  <label>
+                     <input type="radio" name="winner" value="2" />
+                     <div class="button-radio">Team 2</div>
+                  </label>
+               </span>
+            </div>
+
+            <span>
+               <button class="button-secondary">Next Round</button>
+            </span>
          </section>
       </main>
    </body>
