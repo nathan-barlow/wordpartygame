@@ -3,6 +3,7 @@
   --c-white: white;
   --c-10: #ffffff10;
   --c-25: #ffffff25;
+  --c-dark-25: #00000025;
   --br: 10px;
 }
 
@@ -46,6 +47,10 @@ h2 {
 h3 {
   font-size: 2rem;
   font-weight: 900;
+}
+
+.hide {
+  display: none !important;
 }
 
 button,
@@ -114,7 +119,6 @@ input[type=radio]:checked ~ div {
   display: inline-block;
   padding: 2rem;
   border-radius: 100px;
-  aspect-ratio: 1/1;
 }
 
 section {
@@ -127,6 +131,28 @@ section .button-secondary {
   bottom: 1rem;
   left: 50%;
   transform: translateX(-50%);
+}
+
+dialog {
+  border: 0px;
+  background-color: var(--c-dark-25);
+  -webkit-backdrop-filter: blur(30px);
+  color: white;
+  border-radius: var(--br);
+  padding: 3rem;
+  margin: 3rem;
+}
+dialog p {
+  margin-top: 1rem;
+  line-height: 1.8;
+  text-align: left;
+}
+dialog button {
+  margin-top: 1rem;
+}
+dialog::backdrop {
+  background-color: var(--c-25);
+  -webkit-backdrop-filter: blur(10px);
 }
 
 .card {

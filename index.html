@@ -24,28 +24,45 @@
                <span id="team2_score" title="Team 2 score">0</span>
             </div>
          </div>
-         <div class="timer">
-            <span id="time_remaining">60</span>
-         </div>
 
          <section id="home">
             <div>
                <h2>Category</h2>
                <span class="categories">
                   <label>
-                     <input type="radio" name="category" value="Urban Dictionary" />
+                     <input
+                        type="radio"
+                        name="category"
+                        value="Urban Dictionary"
+                        id="cat_urban_dictionary"
+                     />
                      <div class="button-radio">Urban Dictionary</div>
                   </label>
                   <label>
-                     <input type="radio" name="category" value="Food" />
+                     <input
+                        type="radio"
+                        name="category"
+                        value="Food"
+                        id="cat_food"
+                     />
                      <div class="button-radio">Food</div>
                   </label>
                   <label>
-                     <input type="radio" name="category" value="Everything" />
+                     <input
+                        type="radio"
+                        name="category"
+                        value="Everything"
+                        id="cat_everything"
+                     />
                      <div class="button-radio">Everything</div>
                   </label>
                   <label>
-                     <input type="radio" name="category" value="Phrases" />
+                     <input
+                        type="radio"
+                        name="category"
+                        value="Phrases"
+                        id="cat_phrases"
+                     />
                      <div class="button-radio">Phrases</div>
                   </label>
                </span>
@@ -60,12 +77,19 @@
                   max="120"
                   value="60"
                   step="15"
+                  id="game_duration"
                />
             </label>
 
             <label for="points_to_win">
                <h2>Points to win: <span id="points_to_win_label">6</span></h2>
-               <input type="range" min="3" max="12" value="6" />
+               <input
+                  type="range"
+                  min="3"
+                  max="12"
+                  value="6"
+                  id="points_to_win"
+               />
             </label>
 
             <div class="buttons">
@@ -83,9 +107,13 @@
          </section>
 
          <section id="game">
+            <div class="timer" id="timer_container">
+               <span id="timer">60</span>
+            </div>
+
             <span>
                <h2>Category</h2>
-               <h3>Urban Dictionary</h3>
+               <h3 id="current_category">Urban Dictionary</h3>
             </span>
 
             <div class="card">
@@ -112,12 +140,10 @@
          </section>
 
          <section id="round_end">
-            <div class="card">
-               <h2>Time's Up!</h2>
-               <ul id="used_words">
-                  <li>Apple</li>
-                  <li>Lentil Soup</li>
-               </ul>
+            <h2>Time's Up!</h2>
+
+            <div class="card" id="used_words_container">
+               <ul id="used_words"></ul>
             </div>
 
             <div>
@@ -136,9 +162,28 @@
             </div>
 
             <span>
-               <button class="button-secondary">Next Round</button>
+               <button class="button-secondary" id="next_round">
+                  Next Round
+               </button>
             </span>
          </section>
       </main>
+
+      <dialog id="dialog_how_to_play">
+         <h2>How to Play</h2>
+         <p>Gather in a circle with 4+ players. If there is an odd number of players, designate somebody to guess for both teams. Teams will consist of every other person in the circle.</p>
+
+         <p>Choose a category and modify any game settings.</p>
+
+         <p>Determine who will go first. The device will begin in their hands. Click “Start.” The first player tries to get their team to guess the word on the screen. They may not spell the word, say “rhymes with ____,” or use the word or any of the words on the screen.</p>
+
+         <p>As soon as they get it right, they pass it to the left (this person is on the other team) and play continues until the time is up.</p>
+
+         <p>When the time is up, whoever it lands on loses that round. For example, if team 1 is holding the device when the buzzer goes off, team 2 gets the point.</p>
+
+         <button class="button-secondary" onclick="document.getElementById('dialog_how_to_play').close()">Close</button>
+      </dialog>
    </body>
+
+   <script type="module" src="scripts/main.js"></script>
 </html>
