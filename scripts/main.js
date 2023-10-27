@@ -1,6 +1,7 @@
 import Game from "./game.js";
 
 let game;
+let wordsList = [];
 
 document.addEventListener("DOMContentLoaded", start);
 
@@ -14,8 +15,14 @@ const settings = {
 
 const el = {
    score: {
-      team1: document.getElementById("team1_score"),
-      team2: document.getElementById("team2_score"),
+      team1: {
+         score: document.getElementById("team1_score"),
+         input: document.getElementById("winner1"),
+      },
+      team2: {
+         score: document.getElementById("team2_score"),
+         input: document.getElementById("winner2"),
+      },
    },
    settings: {
       cat_urban_dictionary: {
@@ -50,6 +57,7 @@ const el = {
       game: document.getElementById("game"),
       round_end: document.getElementById("round_end"),
    },
+   home_message: document.getElementById("home_message"),
    game: {
       current_category: document.getElementById("current_category"),
       current_word: document.getElementById("current_word"),
@@ -92,6 +100,11 @@ const el = {
          func: "nextRound",
       },
    },
+   audio: {
+      timer: new Audio("audio/beep2.wav"),
+      buzzer: new Audio("audio/buzzer.mp3"),
+      winner: new Audio("audio/winner.mp3"),
+   },
 };
 
 function start() {
@@ -105,6 +118,32 @@ function nextRound() {
    el.section.game.classList.add("hide");
    el.section.round_end.classList.add("hide");
 
+   if (el.score.team1.input.checked) {
+      let oldScore = parseInt(localStorage.getItem("team1_score")) || 0;
+      let newScore = oldScore + 1;
+      localStorage.setItem("team1_score", newScore);
+
+      if (newScore >= settings.pointsToWin) {
+         el.audio.winner.play();
+         alert("Team 1 wins!");
+         restartGame(true);
+      }
+      el.score.team1.input.checked = false;
+   }
+
+   if (el.score.team2.input.checked) {
+      let oldScore = parseInt(localStorage.getItem("team2_score")) || 0;
+      let newScore = oldScore + 1;
+      localStorage.setItem("team2_score", newScore);
+
+      if (newScore >= settings.pointsToWin) {
+         el.audio.winner.play();
+         alert("Team 2 wins!");
+         restartGame(true);
+      }
+      el.score.team1.input.checked = false;
+   }
+
    loadSettings();
 }
 
@@ -115,6 +154,9 @@ function loadSettings() {
    settings.currentCategory = localStorage.getItem("currentCategory") || null;
    settings.gameDuration = localStorage.getItem("gameDuration") || 60;
    settings.pointsToWin = localStorage.getItem("pointsToWin") || 6;
+
+   el.score.team1.score.innerText = settings.team1_score;
+   el.score.team2.score.innerText = settings.team2_score;
 }
 
 function addButtonListeners() {
@@ -122,7 +164,7 @@ function addButtonListeners() {
       button.el.addEventListener("click", () => {
          try {
             eval(button.func + "()");
-         } catch(err) {
+         } catch (err) {
             //console.error(`Function "${button.func}" is not defined.`);
             console.error(err);
          }
@@ -163,21 +205,52 @@ function addSettingListeners() {
    });
 }
 
-function loadList() {
-   return ["Apple", "Banana", "Carrot"];
+async function loadList() {
+   wordsList = [];
+   switch (settings.currentCategory) {
+      case "Urban Dictionary":
+         await loadUrbanDictionary();
+         return wordsList;
+         break;
+      case "Food":
+         loadLocalList("whales");
+   }
+   //return ["Apple", "Banana", "Carrot"];
 }
 
-function startGame() {
-   el.section.home.classList.add("hide");
-   el.section.game.classList.remove("hide");
-   el.section.round_end.classList.add("hide");
+async function startGame() {
+   if (settings.currentCategory != null) {
+      el.home_message.classList.remove("hide");
+      el.home_message.innerText = "Loading words...";
 
-   let wordList = loadList(settings.currentCategory);
-   game = new Game(settings.currentCategory, settings.gameDuration, wordList, el.game, endRound);
+      let wordList = await loadList(settings.currentCategory);
 
-   game.initialize();
-   game.startTimer();
-   game.nextWord();
+      if (wordList) {
+         el.section.home.classList.add("hide");
+         el.section.game.classList.remove("hide");
+         el.section.round_end.classList.add("hide");
+         el.home_message.classList.add("hide");
+
+         game = new Game(
+            settings.currentCategory,
+            settings.gameDuration,
+            wordList,
+            el.game,
+            endRound,
+            el.audio
+         );
+
+         game.initialize();
+         game.startTimer();
+         game.nextWord();
+      } else {
+         el.home_message.classList.remove("hide");
+         el.home_message.innerText = "Failed to load list. Reload and try again or check console for more details.";
+      }
+   } else {
+      el.home_message.classList.remove("hide");
+      el.home_message.innerText = "No category selected.";
+   }
 }
 
 function endRound(usedWords) {
@@ -185,9 +258,15 @@ function endRound(usedWords) {
    el.section.game.classList.add("hide");
    el.section.round_end.classList.remove("hide");
 
-   if(usedWords) {
+   el.audio.timer.pause();
+   el.audio.buzzer.play();
+
+   if (usedWords) {
       el.game.used_words_container.classList.remove("hide");
-      usedWords.map((word) => el.game.used_words.innerHTML += ("<li>" + word + "</li>"));
+      el.game.used_words.innerHTML = "";
+      usedWords.map(
+         (word) => (el.game.used_words.innerHTML += "<li>" + word + "</li>")
+      );
    } else {
       el.game.used_words_container.classList.add("hide");
    }
@@ -202,18 +281,29 @@ function howToPlay() {
    dialog.showModal();
 }
 
-function restartGame() {
-   localStorage.setItem("team1_score", 0);
-   localStorage.setItem("team2_score", 0);
-   localStorage.setItem("currentCategory", null);
-   localStorage.setItem("gameDuration", 60);
-   localStorage.setItem("pointsToWin", 6);
+function restartGame(scoresOnly = false) {
+   if (scoresOnly) {
+      localStorage.setItem("team1_score", 0);
+      localStorage.setItem("team2_score", 0);
+   } else {
+      if (
+         confirm(
+            "Are you sure you want to restart the game? This will clear all scores and settings."
+         )
+      ) {
+         localStorage.setItem("team1_score", 0);
+         localStorage.setItem("team2_score", 0);
+         localStorage.setItem("currentCategory", null);
+         localStorage.setItem("gameDuration", 60);
+         localStorage.setItem("pointsToWin", 6);
 
-   start();
+         start();
+      }
+   }
 }
 
 function pauseGame() {
-   if(game.pauseTimer()) {
+   if (game.pauseTimer()) {
       el.button.pause_game.el.innerHTML = "<i class='bi-play'></i>";
    } else {
       el.button.pause_game.el.innerHTML = "<i class='bi-pause'></i>";
@@ -226,4 +316,50 @@ function skipWord() {
 
 function nextWord() {
    game.nextWord();
+}
+
+async function fetchUrbanDictionary() {
+   try {
+      let response = await fetch("https://api.urbandictionary.com/v0/random");
+      if (!response.ok) {
+         throw new Error("Network response was not ok");
+      }
+      let data = await response.json();
+      let words = data.list.map((def) => def.word);
+      return words;
+   } catch (error) {
+      console.error("Fetch error: ", error);
+      return [];
+   }
+}
+
+async function loadUrbanDictionary() {
+   if (wordsList.length < 50) {
+      try {
+         let words = await fetchUrbanDictionary();
+         wordsList.push(...words);
+
+         // Check if you still need more words
+         if (wordsList.length < 50) {
+            await loadUrbanDictionary(); // Recursively call loadList until you have at least 50 words
+         }
+      } catch (error) {
+         console.error("Error loading words from Urban Dictionary:", error);
+      }
+   }
+}
+
+async function loadLocalList(list) {
+   try {
+      let response = await fetch("./lists.json");
+      if (!response.ok) {
+         throw new Error("Network response was not ok");
+      }
+      let data = await response.json();
+      let words = data[list];
+      console.log(words);
+   } catch (error) {
+      console.error("Fetch error: ", error);
+      return [];
+   }
 }

@@ -93,6 +93,7 @@
             </label>
 
             <div class="buttons">
+               <span class="card hide" id="home_message"></span>
                <button class="button-primary" id="start_game">Start</button>
                <button class="button-secondary" id="how_to_play">
                   How to Play
@@ -117,7 +118,7 @@
             </span>
 
             <div class="card">
-               <p id="current_word">Apple</p>
+               <p id="current_word"></p>
                <button class="button-icon" id="pause_game">
                   <i class="bi-pause"></i>
                </button>
@@ -151,11 +152,11 @@
 
                <span class="winner">
                   <label>
-                     <input type="radio" name="winner" value="1" />
+                     <input type="checkbox" name="winner" value="1" id="winner1" />
                      <div class="button-radio">Team 1</div>
                   </label>
                   <label>
-                     <input type="radio" name="winner" value="2" />
+                     <input type="checkbox" name="winner" value="2" id="winner2" />
                      <div class="button-radio">Team 2</div>
                   </label>
                </span>

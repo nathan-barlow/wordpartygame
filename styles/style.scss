@@ -93,11 +93,13 @@ button,
    padding: 0.5rem 0.75rem;
 }
 
-input[type="radio"] {
+input[type="radio"],
+input[type="checkbox"] {
    display: none;
 }
 
-input[type="radio"]:checked ~ div {
+input[type="radio"]:checked ~ div,
+input[type="checkbox"]:checked ~ div {
    background-color: white;
    color: black;
 }
@@ -124,7 +126,6 @@ input[type="radio"]:checked ~ div {
    display: inline-block;
    padding: 2rem;
    border-radius: 100px;
-   aspect-ratio: 1 / 1;
 }
 
 section {
@@ -179,6 +180,13 @@ dialog {
 }
 
 #home {
+   .card {
+      height: auto;
+      padding: 1rem;
+      display: block;
+      margin-bottom: 1rem;
+   }
+
    .categories {
       margin-top: 1rem;
       display: flex;

@@ -5,13 +5,23 @@ export default class Game {
    usedWords = [];
    timerInterval;
    paused = true;
+   audio;
 
-   constructor(category, gameDuration, unusedWords, gameElements, endRound) {
+   constructor(
+      category,
+      gameDuration,
+      unusedWords,
+      gameElements,
+      endRound,
+      audio
+   ) {
       this.category = category;
       this.gameDuration = gameDuration;
       this.unusedWords = unusedWords;
       this.el = gameElements;
       this.endRound = endRound;
+      this.audio = audio;
+      this.audio.timer.loop = true;
    }
 
    initialize() {
@@ -20,11 +30,19 @@ export default class Game {
    }
 
    startTimer() {
+      this.audio.timer.play();
       this.paused = false;
-      // play sound
       this.timerInterval = setInterval(() => {
          this.gameDuration -= 0.1;
          this.el.timer.innerText = Math.round(this.gameDuration, 1);
+
+         if (this.gameDuration < 10) {
+            this.audio.timer.playbackRate = 2;
+         } else if (this.gameDuration < 20) {
+            this.audio.timer.playbackRate = 1.5;
+         } else if (this.gameDuration < 30) {
+            this.audio.timer.playbackRate = 1.25;
+         }
 
          if (this.gameDuration <= 0) {
             clearInterval(this.timerInterval);
@@ -39,6 +57,7 @@ export default class Game {
       } else {
          this.paused = true;
          clearInterval(this.timerInterval);
+         this.audio.timer.pause();
       }
       return this.paused;
    }
