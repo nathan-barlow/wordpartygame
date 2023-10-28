@@ -21,28 +21,31 @@ export default class Game {
       this.el = gameElements;
       this.endRound = endRound;
       this.audio = audio;
-      this.audio.source = this.audio.createBufferSource();
-      this.audio.loop = true;
-      this.audio.source.connect(this.audio.destination);
    }
 
    async initialize() {
       this.el.current_category.innerText = this.category;
       this.el.timer.innerText = this.gameDuration;
+   }
+
+   async playTimer() {
+      this.audio.source = this.audio.createBufferSource();
+      this.audio.loop = true;
+      this.audio.source.connect(this.audio.destination);
 
       try {
          const audioData = await this.loadAudioFile("audio/beep2.mp3");
          this.audio.source.buffer = audioData;
          this.audio.source.loop = true;
-
-         console.log(this.audio);
       } catch (error) {
          console.error("Error loading audio file:", error);
       }
+
+      this.audio.source.start();
    }
 
-   startTimer() {
-      this.audio.source.start(0);
+   async startTimer() {
+      await this.playTimer();
       this.paused = false;
       this.timerInterval = setInterval(() => {
          this.gameDuration -= 0.1;
@@ -58,8 +61,9 @@ export default class Game {
 
          if (this.gameDuration <= 0) {
             clearInterval(this.timerInterval);
-            this.endRound(this.usedWords);
             this.audio.source.stop();
+            this.audio.source.disconnect();
+            this.endRound(this.usedWords);
          }
       }, 100);
    }
@@ -71,12 +75,17 @@ export default class Game {
          this.paused = true;
          clearInterval(this.timerInterval);
          this.audio.source.stop();
+         this.audio.source.disconnect();
       }
       return this.paused;
    }
 
    clearTimer() {
       clearInterval(this.timerInterval);
+   }
+
+   stopPlayingTimer() {
+      this.audio.source.stop();
    }
 
    nextWord(skipped = false) {
