@@ -21,32 +21,47 @@ export default class Game {
       this.el = gameElements;
       this.endRound = endRound;
       this.audio = audio;
-      this.audio.timer.loop = true;
+      this.audio.source = this.audio.createBufferSource();
+      this.audio.loop = true;
+      this.audio.source.connect(this.audio.destination);
    }
 
-   initialize() {
+   async initialize() {
       this.el.current_category.innerText = this.category;
       this.el.timer.innerText = this.gameDuration;
+
+      try {
+         const audioData = await this.loadAudioFile("audio/beep2.mp3");
+         this.audio.source = this.audio.createBufferSource();
+         this.audio.source.buffer = audioData;
+         this.audio.source.loop = true;
+         this.audio.source.connect(this.audio.destination);
+
+         console.log(this.audio);
+      } catch (error) {
+         console.error("Error loading audio file:", error);
+      }
    }
 
    startTimer() {
-      this.audio.timer.play();
+      this.audio.source.start();
       this.paused = false;
       this.timerInterval = setInterval(() => {
          this.gameDuration -= 0.1;
          this.el.timer.innerText = Math.round(this.gameDuration, 1);
 
-         if (this.gameDuration < 10) {
-            this.audio.timer.playbackRate = 2;
-         } else if (this.gameDuration < 20) {
-            this.audio.timer.playbackRate = 1.5;
-         } else if (this.gameDuration < 30) {
-            this.audio.timer.playbackRate = 1.25;
-         }
+         // if (this.gameDuration < 10) {
+         //    this.audio.playbackRate = 2;
+         // } else if (this.gameDuration < 20) {
+         //    this.audio.playbackRate = 1.5;
+         // } else if (this.gameDuration < 30) {
+         //    this.audio.playbackRate = 1.25;
+         // }
 
          if (this.gameDuration <= 0) {
             clearInterval(this.timerInterval);
             this.endRound(this.usedWords);
+            this.audio.source.stop();
          }
       }, 100);
    }
@@ -57,7 +72,7 @@ export default class Game {
       } else {
          this.paused = true;
          clearInterval(this.timerInterval);
-         this.audio.timer.pause();
+         this.audio.source.stop();
       }
       return this.paused;
    }
@@ -93,5 +108,30 @@ export default class Game {
          this.gameDuration -= 5;
          this.nextWord(true);
       }
+   }
+
+   async loadAudioFile(url) {
+      return new Promise(async (resolve, reject) => {
+         try {
+            const response = await fetch(url);
+            if (!response.ok) {
+               reject("Network response was not ok");
+               return;
+            }
+            const audioData = await response.arrayBuffer();
+            this.audio.decodeAudioData(
+               audioData,
+               (buffer) => {
+                  resolve(buffer);
+               },
+               (error) => {
+                  reject("Error decoding audio data: " + error);
+                  console.error("error decoding");
+               }
+            );
+         } catch (error) {
+            reject("Error loading audio data: " + error);
+         }
+      });
    }
 }

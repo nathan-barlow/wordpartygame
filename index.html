@@ -33,8 +33,9 @@
                      <input
                         type="radio"
                         name="category"
-                        value="Urban Dictionary"
+                        value="urbanDictionary"
                         id="cat_urban_dictionary"
+                        data-name="Urban Dictionary"
                      />
                      <div class="button-radio">Urban Dictionary</div>
                   </label>
@@ -42,8 +43,9 @@
                      <input
                         type="radio"
                         name="category"
-                        value="Food"
+                        value="food"
                         id="cat_food"
+                        data-name="Food"
                      />
                      <div class="button-radio">Food</div>
                   </label>
@@ -51,8 +53,9 @@
                      <input
                         type="radio"
                         name="category"
-                        value="Everything"
+                        value="everything"
                         id="cat_everything"
+                        data-name="Everything"
                      />
                      <div class="button-radio">Everything</div>
                   </label>
@@ -60,8 +63,9 @@
                      <input
                         type="radio"
                         name="category"
-                        value="Phrases"
+                        value="phrases"
                         id="cat_phrases"
+                        data-name="Phrases"
                      />
                      <div class="button-radio">Phrases</div>
                   </label>
@@ -69,7 +73,9 @@
             </div>
 
             <label for="game_duration">
-               <h2><span id="game_duration_label">60</span> seconds</h2>
+               <h2 class="mt">
+                  <span id="game_duration_label">60</span> seconds
+               </h2>
                <input
                   name="game_duration"
                   type="range"
@@ -82,7 +88,9 @@
             </label>
 
             <label for="points_to_win">
-               <h2>Points to win: <span id="points_to_win_label">6</span></h2>
+               <h2 class="mt">
+                  Points to win: <span id="points_to_win_label">6</span>
+               </h2>
                <input
                   type="range"
                   min="3"
@@ -92,10 +100,18 @@
                />
             </label>
 
-            <div class="buttons">
-               <span class="card hide" id="home_message"></span>
-               <button class="button-primary" id="start_game">Start</button>
-               <button class="button-secondary" id="how_to_play">
+            <div class="buttons mt">
+               <span class="card hide" id="home_message_container">
+                  <span id="home_message"></span>
+                  <button
+                     class="button-radio button-block hide"
+                     id="home_message_button"
+                  >
+                     Clear stored words for selected category
+                  </button>
+               </span>
+               <button class="button-primary mt" id="start_game">Start</button>
+               <button class="button-secondary button-bottom" id="how_to_play">
                   How to Play
                </button>
             </div>
@@ -113,18 +129,18 @@
             </div>
 
             <span>
-               <h2>Category</h2>
+               <h2 class="mt">Category</h2>
                <h3 id="current_category">Urban Dictionary</h3>
             </span>
 
-            <div class="card">
+            <div class="card mt">
                <p id="current_word"></p>
                <button class="button-icon" id="pause_game">
                   <i class="bi-pause"></i>
                </button>
             </div>
 
-            <div class="buttons">
+            <div class="buttons mt">
                <button class="button-primary button-black" id="skip_word">
                   Skip
                </button>
@@ -134,7 +150,7 @@
             </div>
 
             <span>
-               <button class="button-secondary" id="end_round">
+               <button class="button-secondary button-bottom" id="end_round">
                   End Round
                </button>
             </span>
@@ -143,46 +159,75 @@
          <section id="round_end">
             <h2>Time's Up!</h2>
 
-            <div class="card" id="used_words_container">
+            <div class="card mt" id="used_words_container">
                <ul id="used_words"></ul>
             </div>
 
             <div>
-               <h3>Who Won?</h3>
+               <h3 class="mt">Who Won?</h3>
 
-               <span class="winner">
+               <span class="winner mt">
                   <label>
-                     <input type="checkbox" name="winner" value="1" id="winner1" />
+                     <input
+                        type="checkbox"
+                        name="winner"
+                        value="1"
+                        id="winner1"
+                     />
                      <div class="button-radio">Team 1</div>
                   </label>
                   <label>
-                     <input type="checkbox" name="winner" value="2" id="winner2" />
+                     <input
+                        type="checkbox"
+                        name="winner"
+                        value="2"
+                        id="winner2"
+                     />
                      <div class="button-radio">Team 2</div>
                   </label>
                </span>
             </div>
 
-            <span>
-               <button class="button-secondary" id="next_round">
-                  Next Round
-               </button>
-            </span>
+            <button class="button-primary mt" id="next_round">
+               Next Round
+            </button>
          </section>
       </main>
 
       <dialog id="dialog_how_to_play">
          <h2>How to Play</h2>
-         <p>Gather in a circle with 4+ players. If there is an odd number of players, designate somebody to guess for both teams. Teams will consist of every other person in the circle.</p>
+         <p>
+            Gather in a circle with 4+ players. If there is an odd number of
+            players, designate somebody to guess for both teams. Teams will
+            consist of every other person in the circle.
+         </p>
 
          <p>Choose a category and modify any game settings.</p>
 
-         <p>Determine who will go first. The device will begin in their hands. Click “Start.” The first player tries to get their team to guess the word on the screen. They may not spell the word, say “rhymes with ____,” or use the word or any of the words on the screen.</p>
+         <p>
+            Determine who will go first. The device will begin in their hands.
+            Click “Start.” The first player tries to get their team to guess the
+            word on the screen. They may not spell the word, say “rhymes with
+            ____,” or use the word or any of the words on the screen.
+         </p>
 
-         <p>As soon as they get it right, they pass it to the left (this person is on the other team) and play continues until the time is up.</p>
+         <p>
+            As soon as they get it right, they pass it to the left (this person
+            is on the other team) and play continues until the time is up.
+         </p>
 
-         <p>When the time is up, whoever it lands on loses that round. For example, if team 1 is holding the device when the buzzer goes off, team 2 gets the point.</p>
+         <p>
+            When the time is up, whoever it lands on loses that round. For
+            example, if team 1 is holding the device when the buzzer goes off,
+            team 2 gets the point.
+         </p>
 
-         <button class="button-secondary" onclick="document.getElementById('dialog_how_to_play').close()">Close</button>
+         <button
+            class="button-secondary"
+            onclick="document.getElementById('dialog_how_to_play').close()"
+         >
+            Close
+         </button>
       </dialog>
    </body>
 

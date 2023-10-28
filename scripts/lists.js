@@ -1,5 +1,5 @@
-{
-   "whales": [
+export default {
+   whales: [
       "whale",
       "ocean",
       "marine",
@@ -113,5 +113,11 @@
       "whale family structure",
       "whale nursery grounds",
       "whale anatomy"
+   ],
+   everything: [
+      "one",
+      "two",
+      "three",
+      "four"
    ]
 }

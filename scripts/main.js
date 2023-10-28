@@ -1,4 +1,5 @@
 import Game from "./game.js";
+import lists from "./lists.js";
 
 let game;
 let wordsList = [];
@@ -11,6 +12,14 @@ const settings = {
    currentCategory: null,
    gameDuration: 60,
    pointsToWin: 6,
+   wordsToGenerate: 2,
+   usedWords: {
+      urbanDictionary: null,
+      food: null,
+      everything: null,
+      phrases: null,
+   },
+   apiCallLimit: 10,
 };
 
 const el = {
@@ -57,7 +66,11 @@ const el = {
       game: document.getElementById("game"),
       round_end: document.getElementById("round_end"),
    },
-   home_message: document.getElementById("home_message"),
+   home_message: {
+      container: document.getElementById("home_message_container"),
+      text: document.getElementById("home_message"),
+      button: document.getElementById("home_message_button"),
+   },
    game: {
       current_category: document.getElementById("current_category"),
       current_word: document.getElementById("current_word"),
@@ -70,6 +83,10 @@ const el = {
       start_game: {
          el: document.getElementById("start_game"),
          func: "startGame",
+      },
+      home_message_button: {
+         el: document.getElementById("home_message_button"),
+         func: "resetCategory",
       },
       how_to_play: {
          el: document.getElementById("how_to_play"),
@@ -101,7 +118,7 @@ const el = {
       },
    },
    audio: {
-      timer: new Audio("audio/beep2.wav"),
+      timer: new AudioContext(),
       buzzer: new Audio("audio/buzzer.mp3"),
       winner: new Audio("audio/winner.mp3"),
    },
@@ -154,9 +171,25 @@ function loadSettings() {
    settings.currentCategory = localStorage.getItem("currentCategory") || null;
    settings.gameDuration = localStorage.getItem("gameDuration") || 60;
    settings.pointsToWin = localStorage.getItem("pointsToWin") || 6;
+   settings.usedWords.urbanDictionary =
+      localStorage.getItem("usedWords_urbanDictionary") || null;
+   settings.usedWords.food = localStorage.getItem("usedWords_food") || null;
+   settings.usedWords.everything =
+      localStorage.getItem("usedWords_everything") || null;
+   settings.usedWords.phrases =
+      localStorage.getItem("usedWords_phrases") || null;
 
    el.score.team1.score.innerText = settings.team1_score;
    el.score.team2.score.innerText = settings.team2_score;
+
+   el.home_message.button.classList.add("hide");
+   el.home_message.container.classList.add("hide");
+   el.home_message.text.innerText = "";
+}
+
+function resetCategory(cat = settings.currentCategory) {
+   localStorage.removeItem("usedWords_" + cat);
+   loadSettings();
 }
 
 function addButtonListeners() {
@@ -165,7 +198,6 @@ function addButtonListeners() {
          try {
             eval(button.func + "()");
          } catch (err) {
-            //console.error(`Function "${button.func}" is not defined.`);
             console.error(err);
          }
       });
@@ -207,49 +239,58 @@ function addSettingListeners() {
 
 async function loadList() {
    wordsList = [];
+   settings.apiCallLimit = 10;
    switch (settings.currentCategory) {
-      case "Urban Dictionary":
-         await loadUrbanDictionary();
-         return wordsList;
-         break;
-      case "Food":
-         loadLocalList("whales");
+      case "urbanDictionary":
+         return await loadUrbanDictionary();
+      case "food":
+         return loadLocalList("whales");
+      case "everything":
+         return loadLocalList("everything");
+      default:
+         return "List does not exist.";
    }
-   //return ["Apple", "Banana", "Carrot"];
 }
 
 async function startGame() {
    if (settings.currentCategory != null) {
-      el.home_message.classList.remove("hide");
-      el.home_message.innerText = "Loading words...";
+      el.home_message.container.classList.remove("hide");
+      el.home_message.text.innerText = "Loading words...";
 
-      let wordList = await loadList(settings.currentCategory);
+      let loadedList = await loadList(settings.currentCategory);
 
-      if (wordList) {
+      if (
+         typeof loadedList === "object" &&
+         loadedList.length >= settings.wordsToGenerate
+      ) {
          el.section.home.classList.add("hide");
          el.section.game.classList.remove("hide");
          el.section.round_end.classList.add("hide");
-         el.home_message.classList.add("hide");
+         el.home_message.container.classList.add("hide");
 
          game = new Game(
             settings.currentCategory,
             settings.gameDuration,
-            wordList,
+            loadedList,
             el.game,
             endRound,
-            el.audio
+            el.audio.timer
          );
 
          game.initialize();
          game.startTimer();
          game.nextWord();
+      } else if (loadedList == "Not enough unused words available.") {
+         el.home_message.container.classList.remove("hide");
+         el.home_message.text.innerText = "Not enough unused words available.";
+         el.home_message.button.classList.remove("hide");
       } else {
-         el.home_message.classList.remove("hide");
-         el.home_message.innerText = "Failed to load list. Reload and try again or check console for more details.";
+         el.home_message.container.classList.remove("hide");
+         el.home_message.text.innerText = "Failed to load list: " + loadedList;
       }
    } else {
-      el.home_message.classList.remove("hide");
-      el.home_message.innerText = "No category selected.";
+      el.home_message.container.classList.remove("hide");
+      el.home_message.text.innerText = "No category selected.";
    }
 }
 
@@ -258,15 +299,19 @@ function endRound(usedWords) {
    el.section.game.classList.add("hide");
    el.section.round_end.classList.remove("hide");
 
-   el.audio.timer.pause();
+   //el.audio.timer.pause();
    el.audio.buzzer.play();
 
    if (usedWords) {
       el.game.used_words_container.classList.remove("hide");
       el.game.used_words.innerHTML = "";
-      usedWords.map(
-         (word) => (el.game.used_words.innerHTML += "<li>" + word + "</li>")
-      );
+      localStorage.setItem("usedWords_" + settings.currentCategory, [
+         settings.usedWords[settings.currentCategory],
+         ...usedWords,
+      ]);
+      usedWords.map((word) => {
+         el.game.used_words.innerHTML += "<li>" + word + "</li>";
+      });
    } else {
       el.game.used_words_container.classList.add("hide");
    }
@@ -318,48 +363,94 @@ function nextWord() {
    game.nextWord();
 }
 
+function addToActiveList(newWords) {
+   let used = settings.usedWords[settings.currentCategory] || [];
+
+   if (typeof newWords === "string") {
+      if (!used.includes(newWords)) {
+         wordsList.push(newWords);
+      } else {
+         console.log("REPEAT WORD");
+      }
+   } else if (typeof newWords === "object") {
+      newWords.map((word) => {
+         if (!used.includes(word)) {
+            wordsList.push(word);
+         } else {
+            console.log("REPEAT WORD");
+         }
+      });
+   } else {
+      return true;
+   }
+}
+
 async function fetchUrbanDictionary() {
    try {
       let response = await fetch("https://api.urbandictionary.com/v0/random");
       if (!response.ok) {
-         throw new Error("Network response was not ok");
+         console.error("Network response was not ok");
       }
       let data = await response.json();
       let words = data.list.map((def) => def.word);
       return words;
    } catch (error) {
-      console.error("Fetch error: ", error);
-      return [];
+      console.error("Error loading from Urban Dictionary - " + error);
+      return "Error loading from Urban Dictionary - " + error;
    }
 }
 
 async function loadUrbanDictionary() {
-   if (wordsList.length < 50) {
-      try {
-         let words = await fetchUrbanDictionary();
-         wordsList.push(...words);
+   if (wordsList.length >= settings.wordsToGenerate) {
+      return wordsList;
+   }
+   if (settings.apiCallLimit <= 0) {
+      return "API call limit reached and not enough words have been retrieved.";
+   }
+   try {
+      let words = await fetchUrbanDictionary();
 
-         // Check if you still need more words
-         if (wordsList.length < 50) {
-            await loadUrbanDictionary(); // Recursively call loadList until you have at least 50 words
-         }
-      } catch (error) {
-         console.error("Error loading words from Urban Dictionary:", error);
+      console.log(typeof words);
+
+      if (typeof words === "object") {
+         addToActiveList(words);
+      } else {
+         return words; // error message
       }
+
+      if (wordsList.length <= settings.wordsToGenerate) {
+         settings.apiCallLimit--;
+         console.log(settings.apiCallLimit);
+         return await loadUrbanDictionary();
+      } else {
+         return wordsList;
+      }
+   } catch (error) {
+      console.error("Error loading words from Urban Dictionary:", error);
+      return "Urban Dictionary API failed to load. Error message: " + error;
    }
 }
 
-async function loadLocalList(list) {
-   try {
-      let response = await fetch("./lists.json");
-      if (!response.ok) {
-         throw new Error("Network response was not ok");
+function loadLocalList(cat) {
+   let words = lists[cat];
+
+   if (words.length > settings.wordsToGenerate) {
+      const shuffled = words.slice();
+
+      while (wordsList.length < settings.wordsToGenerate) {
+         const randomIndex = Math.floor(Math.random() * shuffled.length);
+         const randomWord = shuffled.splice(randomIndex, 1)[0];
+
+         if (addToActiveList(randomWord)) {
+            console.error("Not enough unique words.");
+            return "Not enough unused words available.";
+            break;
+         }
       }
-      let data = await response.json();
-      let words = data[list];
-      console.log(words);
-   } catch (error) {
-      console.error("Fetch error: ", error);
-      return [];
+
+      return wordsList;
+   } else {
+      console.error("Stored list is not long enough.");
+      return "Stored list is not long enough.";
    }
 }
