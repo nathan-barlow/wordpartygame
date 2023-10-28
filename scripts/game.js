@@ -32,10 +32,8 @@ export default class Game {
 
       try {
          const audioData = await this.loadAudioFile("audio/beep2.mp3");
-         this.audio.source = this.audio.createBufferSource();
          this.audio.source.buffer = audioData;
          this.audio.source.loop = true;
-         this.audio.source.connect(this.audio.destination);
 
          console.log(this.audio);
       } catch (error) {
@@ -44,19 +42,19 @@ export default class Game {
    }
 
    startTimer() {
-      this.audio.source.start();
+      this.audio.source.start(0);
       this.paused = false;
       this.timerInterval = setInterval(() => {
          this.gameDuration -= 0.1;
          this.el.timer.innerText = Math.round(this.gameDuration, 1);
 
-         // if (this.gameDuration < 10) {
-         //    this.audio.playbackRate = 2;
-         // } else if (this.gameDuration < 20) {
-         //    this.audio.playbackRate = 1.5;
-         // } else if (this.gameDuration < 30) {
-         //    this.audio.playbackRate = 1.25;
-         // }
+         if (this.gameDuration < 10) {
+            this.audio.source.playbackRate.value = 2;
+         } else if (this.gameDuration < 20) {
+            this.audio.source.playbackRate.value = 1.5;
+         } else if (this.gameDuration < 30) {
+            this.audio.source.playbackRate.value = 1.25;
+         }
 
          if (this.gameDuration <= 0) {
             clearInterval(this.timerInterval);
