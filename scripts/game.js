@@ -61,8 +61,7 @@ export default class Game {
 
          if (this.gameDuration <= 0) {
             clearInterval(this.timerInterval);
-            this.audio.source.stop();
-            this.audio.source.disconnect();
+            this.stopPlayingTimer();
             this.endRound(this.usedWords);
          }
       }, 100);
@@ -86,6 +85,7 @@ export default class Game {
 
    stopPlayingTimer() {
       this.audio.source.stop();
+      this.audio.source.disconnect();
    }
 
    nextWord(skipped = false) {

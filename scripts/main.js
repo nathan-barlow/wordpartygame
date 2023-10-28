@@ -299,7 +299,7 @@ function endRound(usedWords) {
    el.section.game.classList.add("hide");
    el.section.round_end.classList.remove("hide");
 
-   //el.audio.timer.pause();
+   game.stopPlayingTimer();
    el.audio.buzzer.play();
 
    if (usedWords) {
