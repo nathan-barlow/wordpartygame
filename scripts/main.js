@@ -12,7 +12,8 @@ const settings = {
    currentCategory: null,
    gameDuration: 60,
    pointsToWin: 6,
-   wordsToGenerate: 2,
+   showTimer: true,
+   wordsToGenerate: 50,
    usedWords: {
       urbanDictionary: null,
       food: null,
@@ -59,6 +60,10 @@ const el = {
          el: document.getElementById("points_to_win"),
          label: document.getElementById("points_to_win_label"),
          var: "pointsToWin",
+      },
+      show_timer: {
+         el: document.getElementById("show_timer"),
+         var: "showTimer",
       },
    },
    section: {
@@ -171,6 +176,7 @@ function loadSettings() {
    settings.currentCategory = localStorage.getItem("currentCategory") || null;
    settings.gameDuration = localStorage.getItem("gameDuration") || 60;
    settings.pointsToWin = localStorage.getItem("pointsToWin") || 6;
+   settings.showTimer = localStorage.getItem("showTimer") || true;
    settings.usedWords.urbanDictionary =
       localStorage.getItem("usedWords_urbanDictionary") || null;
    settings.usedWords.food = localStorage.getItem("usedWords_food") || null;
@@ -209,6 +215,12 @@ function addSettingListeners() {
       if (setting.label) {
          setting.el.value = settings[setting.var];
          setting.label.innerText = settings[setting.var];
+      } else if (setting.el.dataset.type == "toggle") {
+         if (settings[setting.var] == "true") {
+            setting.el.checked = true;
+         } else {
+            setting.el.checked = false;
+         }
       } else {
          let selected = document.querySelector(
             'input[value="' + settings[setting.var] + '"]'
@@ -226,7 +238,14 @@ function addSettingListeners() {
          }
       }
       setting.el.addEventListener("input", () => {
-         let value = setting.el.value;
+         let value;
+
+         if (setting.el.dataset.type == "toggle") {
+            value = setting.el.checked;
+         } else {
+            value = setting.el.value;
+         }
+
          if (setting.label) {
             setting.label.innerText = value;
          }
@@ -269,12 +288,15 @@ async function startGame() {
          el.home_message.container.classList.add("hide");
 
          game = new Game(
-            settings.currentCategory,
+            settings.currentCategory
+               .replace(/([a-z])([A-Z])/g, "$1 $2")
+               .replace(/\b\w/g, (l) => l.toUpperCase()),
             settings.gameDuration,
             loadedList,
             el.game,
             endRound,
-            el.audio.timer
+            el.audio.timer,
+            settings.showTimer
          );
 
          game.initialize();
@@ -294,13 +316,15 @@ async function startGame() {
    }
 }
 
-function endRound(usedWords) {
+async function endRound(usedWords) {
    el.section.home.classList.add("hide");
    el.section.game.classList.add("hide");
    el.section.round_end.classList.remove("hide");
 
    game.stopPlayingTimer();
-   el.audio.buzzer.play();
+   await game.playAudio("buzzer", false);
+   game.clearTimer();
+   game = null;
 
    if (usedWords) {
       el.game.used_words_container.classList.remove("hide");
@@ -315,10 +339,6 @@ function endRound(usedWords) {
    } else {
       el.game.used_words_container.classList.add("hide");
    }
-
-   game.clearTimer();
-
-   game = null;
 }
 
 function howToPlay() {
@@ -350,8 +370,10 @@ function restartGame(scoresOnly = false) {
 function pauseGame() {
    if (game.pauseTimer()) {
       el.button.pause_game.el.innerHTML = "<i class='bi-play'></i>";
+      console.log("true");
    } else {
       el.button.pause_game.el.innerHTML = "<i class='bi-pause'></i>";
+      console.log("false");
    }
 }
 

@@ -101,6 +101,23 @@
                />
             </label>
 
+            <div class="toggles mt">
+               <span>
+                  <label>
+                     <h2>Show Timer</h2>
+                     <input
+                        type="checkbox"
+                        name="timerToggle"
+                        value="showTimer"
+                        id="show_timer"
+                        data-type="toggle"
+                        checked
+                     />
+                     <span class="toggle"></span>
+                  </label>
+               </span>
+            </div>
+
             <div class="buttons mt">
                <span class="card hide" id="home_message_container">
                   <span id="home_message"></span>
@@ -129,26 +146,28 @@
                <span id="timer">60</span>
             </div>
 
-            <span>
-               <h2 class="mt">Category</h2>
-               <h3 id="current_category">Urban Dictionary</h3>
+            <span class="game-main">
+               <span>
+                  <h2 class="mt">Category</h2>
+                  <h3 id="current_category"></h3>
+               </span>
+
+               <div class="card mt">
+                  <p id="current_word"></p>
+                  <button class="button-icon" id="pause_game">
+                     <i class="bi-pause"></i>
+                  </button>
+               </div>
+
+               <div class="buttons mt">
+                  <button class="button-primary button-black" id="skip_word">
+                     Skip
+                  </button>
+                  <button class="button-primary" id="next_word">
+                     Next <i class="bi-fast-forward-fill"></i>
+                  </button>
+               </div>
             </span>
-
-            <div class="card mt">
-               <p id="current_word"></p>
-               <button class="button-icon" id="pause_game">
-                  <i class="bi-pause"></i>
-               </button>
-            </div>
-
-            <div class="buttons mt">
-               <button class="button-primary button-black" id="skip_word">
-                  Skip
-               </button>
-               <button class="button-primary" id="next_word">
-                  Next <i class="bi-fast-forward-fill"></i>
-               </button>
-            </div>
 
             <span>
                <button class="button-secondary button-bottom" id="end_round">

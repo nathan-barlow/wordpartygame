@@ -13,7 +13,8 @@ export default class Game {
       unusedWords,
       gameElements,
       endRound,
-      audio
+      audio,
+      showTimer
    ) {
       this.category = category;
       this.gameDuration = gameDuration;
@@ -21,37 +22,67 @@ export default class Game {
       this.el = gameElements;
       this.endRound = endRound;
       this.audio = audio;
+      this.showTimer = showTimer;
    }
 
    async initialize() {
+      this.el.timer_container.classList.remove("hide");
+      if (!this.showTimer || this.showTimer == "false") {
+         this.el.timer_container.classList.add("hide");
+      }
       this.el.current_category.innerText = this.category;
       this.el.timer.innerText = this.gameDuration;
    }
 
-   async playTimer() {
+   async playAudio(file, loop) {
       this.audio.source = this.audio.createBufferSource();
-      this.audio.loop = true;
       this.audio.source.connect(this.audio.destination);
 
+      let audioFile;
+
+      console.log(file + loop)
+
+      switch(file) {
+         case "beep":
+            audioFile = "audio/beep2.mp3";
+            break;
+         case "buzzer":
+            audioFile = "audio/buzzer.mp3";
+            break;
+         case "winner":
+            audioFile = "audio/winner.mp3";
+            break;
+         default:
+            break;
+      }
+
       try {
-         const audioData = await this.loadAudioFile("audio/beep2.mp3");
+         const audioData = await this.loadAudioFile(audioFile);
          this.audio.source.buffer = audioData;
-         this.audio.source.loop = true;
+         this.audio.source.loop = loop;
       } catch (error) {
          console.error("Error loading audio file:", error);
       }
 
       this.audio.source.start();
+
+      if(!loop) {
+         this.audio.source.onended = () => {
+            this.audio.source.disconnect();
+         }
+      }
    }
 
    async startTimer() {
-      await this.playTimer();
+      await this.playAudio("beep", true);
       this.paused = false;
       this.timerInterval = setInterval(() => {
          this.gameDuration -= 0.1;
          this.el.timer.innerText = Math.round(this.gameDuration, 1);
 
-         if (this.gameDuration < 10) {
+         if (this.gameDuration < 5) {
+            this.audio.source.playbackRate.value = 3;
+         } else if (this.gameDuration < 10) {
             this.audio.source.playbackRate.value = 2;
          } else if (this.gameDuration < 20) {
             this.audio.source.playbackRate.value = 1.5;
@@ -61,7 +92,6 @@ export default class Game {
 
          if (this.gameDuration <= 0) {
             clearInterval(this.timerInterval);
-            this.stopPlayingTimer();
             this.endRound(this.usedWords);
          }
       }, 100);
@@ -70,13 +100,14 @@ export default class Game {
    pauseTimer() {
       if (this.paused) {
          this.startTimer();
+         return false;
       } else {
          this.paused = true;
          clearInterval(this.timerInterval);
          this.audio.source.stop();
          this.audio.source.disconnect();
+         return true;
       }
-      return this.paused;
    }
 
    clearTimer() {
@@ -86,6 +117,8 @@ export default class Game {
    stopPlayingTimer() {
       this.audio.source.stop();
       this.audio.source.disconnect();
+
+      console.log("disconnected");
    }
 
    nextWord(skipped = false) {
@@ -113,6 +146,7 @@ export default class Game {
    skipWord() {
       if (this.gameDuration > 5) {
          this.gameDuration -= 5;
+         this.el.timer.innerText = Math.round(this.gameDuration, 1);
          this.nextWord(true);
       }
    }
@@ -123,6 +157,7 @@ export default class Game {
             const response = await fetch(url);
             if (!response.ok) {
                reject("Network response was not ok");
+               console.error("Network response not okay");
                return;
             }
             const audioData = await response.arrayBuffer();

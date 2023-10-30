@@ -7,9 +7,13 @@
   --br: 10px;
 }
 
+* {
+  box-sizing: border-box;
+}
+
 body {
   background: url("background.webp");
-  background-size: cover;
+  background-size: 100% 100%;
   background-position-x: 80%;
   margin: auto;
   overflow: hidden;
@@ -20,7 +24,7 @@ body {
 }
 
 main {
-  height: calc(100vh - 6rem);
+  height: 100svh;
   overflow-y: auto;
   padding: 3rem;
   max-width: 800px;
@@ -129,17 +133,8 @@ input[type=checkbox]:checked ~ div {
   float: right;
 }
 
-.timer {
-  font-size: 4rem;
-  font-weight: 900;
-  background-color: var(--c-10);
-  display: inline-block;
-  padding: 2rem;
-  border-radius: 100px;
-}
-
 section {
-  padding: 3rem 0px;
+  clear: both;
 }
 section .pt {
   padding-top: 1.5rem;
@@ -154,9 +149,10 @@ dialog {
   -webkit-backdrop-filter: blur(30px);
   color: white;
   border-radius: var(--br);
-  padding: 3rem;
-  margin: 3rem;
+  padding: 1.5rem;
+  margin: auto;
   overflow-y: scroll;
+  max-width: min(96vw, 800px);
 }
 dialog p {
   margin-top: 1rem;
@@ -198,15 +194,77 @@ dialog::backdrop {
   gap: 0.5rem;
   justify-content: center;
 }
+#home .toggles span > label {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  align-items: center;
+}
+#home .toggles .toggle {
+  text-indent: -9999px;
+  cursor: pointer;
+  width: 2.6rem;
+  height: 1.4rem;
+  background: var(--c-10);
+  display: block;
+  border-radius: 100px;
+  position: relative;
+  transition: background 500ms cubic-bezier(0.8, 0, 0.2, 1);
+}
+#home .toggles .toggle:after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: calc(1.4rem - 4px);
+  min-width: calc(1.4rem - 4px);
+  height: calc(1.4rem - 4px);
+  background: var(--c-dark-25);
+  border-radius: 90px;
+  transition: 500ms cubic-bezier(0.8, 0, 0.2, 1);
+}
+#home .toggles input:checked + .toggle {
+  background: var(--c-25);
+}
+#home .toggles input:focus + .toggle {
+  outline: 1px solid var(--c-dark-25);
+  outline-offset: 2px;
+}
+#home .toggles input:checked + .toggle:after {
+  left: calc(100% - 2px);
+  transform: translateX(-100%);
+  background: white;
+}
 #home #start_game {
   min-width: 50%;
   max-width: 300px;
 }
 
+#game {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  clear: both;
+}
+#game .game-main {
+  width: 100%;
+}
 #game .card {
   font-size: 1.5rem;
   align-items: center;
   justify-content: center;
+}
+#game .timer {
+  font-size: 4rem;
+  font-weight: 900;
+  background-color: var(--c-10);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 120px;
+  height: 120px;
+  border-radius: 100px;
+  margin-top: -5rem;
 }
 #game .buttons {
   display: flex;
@@ -239,10 +297,7 @@ dialog::backdrop {
 @media (max-width: 800px) {
   main {
     padding: 1rem;
-    height: calc(100svh - 2rem);
-  }
-  section {
-    padding: 3rem 0px;
+    height: 100svh;
   }
   section .pt {
     padding-top: 1rem;
@@ -252,5 +307,8 @@ dialog::backdrop {
   }
   #game .buttons {
     gap: 1rem;
+  }
+  #game .timer {
+    margin-top: -3rem;
   }
 }/*# sourceMappingURL=style.css.map */
