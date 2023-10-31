@@ -88,15 +88,19 @@ button,
    border-radius: 100px;
    color: white;
    background-color: var(--c-10);
+   aspect-ratio: 1;
+}
+
+.game-settings,
+#game .button-icon {
    position: absolute;
    right: 1rem;
    bottom: 1rem;
-   aspect-ratio: 1;
 }
 
 .button-bottom {
    position: absolute;
-   bottom: 1rem;
+   bottom: 1.5rem;
    left: 50%;
    transform: translateX(-50%);
 }
@@ -138,6 +142,11 @@ input[type="checkbox"]:checked ~ div {
    }
 }
 
+.buttons {
+   display: flex;
+   gap: 1.5rem;
+}
+
 section {
    clear: both;
 
@@ -163,7 +172,7 @@ dialog {
 
    p {
       margin-top: 1rem;
-      line-height: 1.8;
+      line-height: 1.5;
       text-align: left;
    }
 
@@ -255,6 +264,10 @@ dialog {
       }
    }
 
+   #home_message {
+      line-height: 1.5;
+   }
+
    #start_game {
       min-width: 50%;
       max-width: 300px;
@@ -290,19 +303,14 @@ dialog {
       margin-top: -5rem;
    }
 
-   .buttons {
-      display: flex;
-      gap: 1.5rem;
+   #skip_word {
+      background-color: var(--c-10);
+      color: white;
+      border: 1px solid var(--c-25);
+   }
 
-      #skip_word {
-         background-color: var(--c-10);
-         color: white;
-         border: 1px solid var(--c-25);
-      }
-
-      #next_word {
-         width: 100%;
-      }
+   #next_word {
+      width: 100%;
    }
 }
 
@@ -331,6 +339,18 @@ dialog {
       height: 100svh;
    }
 
+   .game-settings {
+      flex-direction: column;
+   }
+
+   .button-bottom {
+      bottom: 1rem;
+   }
+
+   .buttons {
+      gap: 1rem;
+   }
+
    section {
       .pt {
          padding-top: 1rem;
@@ -342,10 +362,6 @@ dialog {
    }
 
    #game {
-      .buttons {
-         gap: 1rem;
-      }
-
       .timer {
          margin-top: -3rem;
       }

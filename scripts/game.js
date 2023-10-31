@@ -40,9 +40,7 @@ export default class Game {
 
       let audioFile;
 
-      console.log(file + loop)
-
-      switch(file) {
+      switch (file) {
          case "beep":
             audioFile = "audio/beep2.mp3";
             break;
@@ -66,10 +64,10 @@ export default class Game {
 
       this.audio.source.start();
 
-      if(!loop) {
+      if (!loop) {
          this.audio.source.onended = () => {
             this.audio.source.disconnect();
-         }
+         };
       }
    }
 
@@ -117,8 +115,6 @@ export default class Game {
    stopPlayingTimer() {
       this.audio.source.stop();
       this.audio.source.disconnect();
-
-      console.log("disconnected");
    }
 
    nextWord(skipped = false) {

@@ -13,7 +13,7 @@ const settings = {
    gameDuration: 60,
    pointsToWin: 6,
    showTimer: true,
-   wordsToGenerate: 50,
+   wordsToGenerate: 2,
    usedWords: {
       urbanDictionary: null,
       food: null,
@@ -96,6 +96,10 @@ const el = {
       how_to_play: {
          el: document.getElementById("how_to_play"),
          func: "howToPlay",
+      },
+      test_audio: {
+         el: document.getElementById("test_audio"),
+         func: "testAudio",
       },
       restart_game: {
          el: document.getElementById("restart_game"),
@@ -263,9 +267,11 @@ async function loadList() {
       case "urbanDictionary":
          return await loadUrbanDictionary();
       case "food":
-         return loadLocalList("whales");
+         return loadLocalList("food");
       case "everything":
          return loadLocalList("everything");
+      case "phrases":
+         return loadLocalList("phrases");
       default:
          return "List does not exist.";
    }
@@ -327,11 +333,15 @@ async function endRound(usedWords) {
    game = null;
 
    if (usedWords) {
+      let cleanedWords = usedWords.map((word) => {
+         return word.replace(/\s+\(skipped\)$/, "");
+      });
+
       el.game.used_words_container.classList.remove("hide");
       el.game.used_words.innerHTML = "";
       localStorage.setItem("usedWords_" + settings.currentCategory, [
          settings.usedWords[settings.currentCategory],
-         ...usedWords,
+         ...cleanedWords,
       ]);
       usedWords.map((word) => {
          el.game.used_words.innerHTML += "<li>" + word + "</li>";
@@ -344,6 +354,18 @@ async function endRound(usedWords) {
 function howToPlay() {
    let dialog = document.getElementById("dialog_how_to_play");
    dialog.showModal();
+}
+
+async function testAudio() {
+   game = new Game();
+   game.audio = el.audio.timer;
+   await game.playAudio("beep", false);
+
+   game = null;
+
+   el.home_message.container.classList.remove("hide");
+   el.home_message.text.innerHTML =
+      "Audio has played. If you did not hear anything, please make sure your volume is turned up, enable the ringer <i class='bi bi-bell-slash'></i> on your device, and refresh the page.";
 }
 
 function restartGame(scoresOnly = false) {
@@ -456,12 +478,26 @@ async function loadUrbanDictionary() {
 function loadLocalList(cat) {
    let words = lists[cat];
 
+   console.log(words);
+
    if (words.length > settings.wordsToGenerate) {
       const shuffled = words.slice();
 
       while (wordsList.length < settings.wordsToGenerate) {
          const randomIndex = Math.floor(Math.random() * shuffled.length);
-         const randomWord = shuffled.splice(randomIndex, 1)[0];
+         let randomWord;
+
+         if (!isBase64Encoded(shuffled[randomIndex])) {
+            if (shuffled[randomIndex] == undefined) {
+               console.error("Not enough unique words.");
+               return "Not enough unused words available.";
+            } else {
+               randomWord = shuffled.splice(randomIndex, 1)[0];
+               console.error("Error decoding words list");
+            }
+         } else {
+            randomWord = atob(shuffled.splice(randomIndex, 1)[0]);
+         }
 
          if (addToActiveList(randomWord)) {
             console.error("Not enough unique words.");
@@ -474,5 +510,13 @@ function loadLocalList(cat) {
    } else {
       console.error("Stored list is not long enough.");
       return "Stored list is not long enough.";
+   }
+}
+
+function isBase64Encoded(str) {
+   try {
+      return btoa(atob(str)) == str;
+   } catch (e) {
+      return false;
    }
 }
