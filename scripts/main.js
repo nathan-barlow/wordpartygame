@@ -12,8 +12,8 @@ const settings = {
    currentCategory: null,
    gameDuration: 60,
    pointsToWin: 6,
-   showTimer: true,
-   wordsToGenerate: 2,
+   showTimer: "true",
+   wordsToGenerate: 50,
    usedWords: {
       urbanDictionary: null,
       food: null,
@@ -49,6 +49,10 @@ const el = {
       },
       cat_phrases: {
          el: document.getElementById("cat_phrases"),
+         var: "currentCategory",
+      },
+      cat_wisconsin: {
+         el: document.getElementById("cat_wisconsin"),
          var: "currentCategory",
       },
       game_duration: {
@@ -180,7 +184,7 @@ function loadSettings() {
    settings.currentCategory = localStorage.getItem("currentCategory") || null;
    settings.gameDuration = localStorage.getItem("gameDuration") || 60;
    settings.pointsToWin = localStorage.getItem("pointsToWin") || 6;
-   settings.showTimer = localStorage.getItem("showTimer") || true;
+   settings.showTimer = localStorage.getItem("showTimer") || "true";
    settings.usedWords.urbanDictionary =
       localStorage.getItem("usedWords_urbanDictionary") || null;
    settings.usedWords.food = localStorage.getItem("usedWords_food") || null;
@@ -272,6 +276,8 @@ async function loadList() {
          return loadLocalList("everything");
       case "phrases":
          return loadLocalList("phrases");
+      case "wisconsin":
+         return loadLocalList("wisconsin");
       default:
          return "List does not exist.";
    }
@@ -384,7 +390,10 @@ function restartGame(scoresOnly = false) {
          localStorage.setItem("gameDuration", 60);
          localStorage.setItem("pointsToWin", 6);
 
-         start();
+         game = null;
+
+         location.reload();
+         return false;
       }
    }
 }
@@ -476,9 +485,13 @@ async function loadUrbanDictionary() {
 }
 
 function loadLocalList(cat) {
-   let words = lists[cat];
+   let words = [];
 
-   console.log(words);
+   if (cat == "everything") {
+      Object.values(lists).forEach((category) => {words.push(...category)});
+   } else {
+      words = lists[cat];
+   }
 
    if (words.length > settings.wordsToGenerate) {
       const shuffled = words.slice();

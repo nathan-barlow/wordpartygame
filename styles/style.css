@@ -151,6 +151,9 @@ section .pt {
 section .mt {
   margin-top: 1.5rem;
 }
+section .bt {
+  border-top: 1px solid var(--c-25);
+}
 
 dialog {
   border: 0px;
@@ -199,9 +202,9 @@ dialog::backdrop {
 #home .categories {
   margin-top: 1rem;
   display: flex;
-  flex-wrap: wrap;
   gap: 0.5rem;
   justify-content: center;
+  flex-wrap: wrap;
 }
 #home .toggles span > label {
   display: flex;
@@ -324,5 +327,20 @@ dialog::backdrop {
   }
   #game .timer {
     margin-top: -3rem;
+  }
+}
+@media (hover: none) {
+  #home .categories {
+    justify-content: flex-start;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+    white-space: nowrap;
+  }
+  #home .categories::-webkit-scrollbar {
+    display: none;
+  }
+  #home .categories label {
+    flex: 0 0 auto;
   }
 }/*# sourceMappingURL=style.css.map */

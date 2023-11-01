@@ -157,6 +157,10 @@ section {
    .mt {
       margin-top: 1.5rem;
    }
+
+   .bt {
+      border-top: 1px solid var(--c-25);
+   }
 }
 
 dialog {
@@ -210,9 +214,9 @@ dialog {
    .categories {
       margin-top: 1rem;
       display: flex;
-      flex-wrap: wrap;
       gap: 0.5rem;
       justify-content: center;
+      flex-wrap: wrap;
    }
 
    .toggles {
@@ -364,6 +368,26 @@ dialog {
    #game {
       .timer {
          margin-top: -3rem;
+      }
+   }
+}
+
+@media (hover: none) {
+   #home {
+      .categories {
+         justify-content: flex-start;
+         flex-wrap: nowrap;
+         overflow-x: auto;
+         scrollbar-width: none;
+         white-space: nowrap;
+
+         &::-webkit-scrollbar {
+            display: none;
+         }
+
+         label {
+            flex: 0 0 auto;
+         }
       }
    }
 }

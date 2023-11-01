@@ -30,52 +30,6 @@
          </div>
 
          <section id="home">
-            <div>
-               <h2>Category</h2>
-               <span class="categories">
-                  <label>
-                     <input
-                        type="radio"
-                        name="category"
-                        value="urbanDictionary"
-                        id="cat_urban_dictionary"
-                        data-name="Urban Dictionary"
-                     />
-                     <div class="button-radio">Urban Dictionary</div>
-                  </label>
-                  <label>
-                     <input
-                        type="radio"
-                        name="category"
-                        value="food"
-                        id="cat_food"
-                        data-name="Food"
-                     />
-                     <div class="button-radio">Food</div>
-                  </label>
-                  <label>
-                     <input
-                        type="radio"
-                        name="category"
-                        value="everything"
-                        id="cat_everything"
-                        data-name="Everything"
-                     />
-                     <div class="button-radio">Everything</div>
-                  </label>
-                  <label>
-                     <input
-                        type="radio"
-                        name="category"
-                        value="phrases"
-                        id="cat_phrases"
-                        data-name="Phrases"
-                     />
-                     <div class="button-radio">Phrases</div>
-                  </label>
-               </span>
-            </div>
-
             <label for="game_duration">
                <h2 class="mt">
                   <span id="game_duration_label">60</span> seconds
@@ -86,7 +40,7 @@
                   min="30"
                   max="120"
                   value="60"
-                  step="15"
+                  step="5"
                   id="game_duration"
                />
             </label>
@@ -121,13 +75,70 @@
                </span>
             </div>
 
+            <div class="mt pt bt">
+               <h2>Category</h2>
+               <span class="categories">
+                  <label>
+                     <input
+                        type="radio"
+                        name="category"
+                        value="everything"
+                        id="cat_everything"
+                        data-name="Everything"
+                     />
+                     <div class="button-radio">Everything</div>
+                  </label>
+                  <label>
+                     <input
+                        type="radio"
+                        name="category"
+                        value="food"
+                        id="cat_food"
+                        data-name="Food"
+                     />
+                     <div class="button-radio">Food</div>
+                  </label>
+                  <label>
+                     <input
+                        type="radio"
+                        name="category"
+                        value="phrases"
+                        id="cat_phrases"
+                        data-name="Phrases"
+                     />
+                     <div class="button-radio">Phrases</div>
+                  </label>
+                  <label>
+                     <input
+                        type="radio"
+                        name="category"
+                        value="urbanDictionary"
+                        id="cat_urban_dictionary"
+                        data-name="Urban Dictionary"
+                     />
+                     <div class="button-radio">Urban Dictionary</div>
+                  </label>
+                  <label>
+                     <input
+                        type="radio"
+                        name="category"
+                        value="wisconsin"
+                        id="cat_wisconsin"
+                        data-name="Wisconsin"
+                     />
+                     <div class="button-radio">Wisconsin</div>
+                  </label>
+               </span>
+            </div>
+
             <div class="mt">
                <button class="button-primary" id="start_game">Start</button>
                <span class="card hide mt" id="home_message_container">
                   <span id="home_message"></span>
                   <button
                      class="button-radio button-block hide"
-                     id="home_message_button">
+                     id="home_message_button"
+                  >
                      Clear stored words for selected category
                   </button>
                </span>
@@ -143,7 +154,11 @@
                <button class="button-icon" id="test_audio" title="Test Audio">
                   <i class="bi-volume-up"></i>
                </button>
-               <button class="button-icon" id="restart_game" title="Restart Game">
+               <button
+                  class="button-icon"
+                  id="restart_game"
+                  title="Restart Game"
+               >
                   <i class="bi-arrow-clockwise"></i>
                </button>
             </span>
