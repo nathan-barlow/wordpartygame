@@ -55,6 +55,58 @@ const el = {
          el: document.getElementById("cat_wisconsin"),
          var: "currentCategory",
       },
+      cat_easy_words: {
+         el: document.getElementById("cat_easy_words"),
+         var: "currentCategory",
+      },
+      cat_medium_words: {
+         el: document.getElementById("cat_medium_words"),
+         var: "currentCategory",
+      },
+      cat_hard_words: {
+         el: document.getElementById("cat_hard_words"),
+         var: "currentCategory",
+      },
+      cat_christmas: {
+         el: document.getElementById("cat_christmas"),
+         var: "currentCategory",
+      },
+      cat_thanksgiving: {
+         el: document.getElementById("cat_thanksgiving"),
+         var: "currentCategory",
+      },
+      cat_valentines_day: {
+         el: document.getElementById("cat_valentines_day"),
+         var: "currentCategory",
+      },
+      cat_independence_day: {
+         el: document.getElementById("cat_independence_day"),
+         var: "currentCategory",
+      },
+      cat_new_years: {
+         el: document.getElementById("cat_new_years"),
+         var: "currentCategory",
+      },
+      cat_spring: {
+         el: document.getElementById("cat_spring"),
+         var: "currentCategory",
+      },
+      cat_household: {
+         el: document.getElementById("cat_household"),
+         var: "currentCategory",
+      },
+      cat_animals: {
+         el: document.getElementById("cat_animals"),
+         var: "currentCategory",
+      },
+      cat_travel: {
+         el: document.getElementById("cat_travel"),
+         var: "currentCategory",
+      },
+      cat_idioms: {
+         el: document.getElementById("cat_idioms"),
+         var: "currentCategory",
+      },
       game_duration: {
          el: document.getElementById("game_duration"),
          label: document.getElementById("game_duration_label"),
@@ -270,16 +322,11 @@ async function loadList() {
    switch (settings.currentCategory) {
       case "urbanDictionary":
          return await loadUrbanDictionary();
-      case "food":
-         return loadLocalList("food");
       case "everything":
-         return loadLocalList("everything");
-      case "phrases":
-         return loadLocalList("phrases");
-      case "wisconsin":
-         return loadLocalList("wisconsin");
+         return loadLocalList("random");
       default:
-         return "List does not exist.";
+         return loadLocalList(settings.currentCategory);
+      //return "List does not exist.";
    }
 }
 
@@ -488,7 +535,9 @@ function loadLocalList(cat) {
    let words = [];
 
    if (cat == "everything") {
-      Object.values(lists).forEach((category) => {words.push(...category)});
+      Object.values(lists).forEach((category) => {
+         words.push(...category);
+      });
    } else {
       words = lists[cat];
    }
