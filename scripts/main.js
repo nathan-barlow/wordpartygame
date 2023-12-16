@@ -47,6 +47,10 @@ const el = {
          el: document.getElementById("cat_everything"),
          var: "currentCategory",
       },
+      cat_random: {
+         el: document.getElementById("cat_random"),
+         var: "currentCategory",
+      },
       cat_phrases: {
          el: document.getElementById("cat_phrases"),
          var: "currentCategory",
@@ -65,6 +69,10 @@ const el = {
       },
       cat_hard_words: {
          el: document.getElementById("cat_hard_words"),
+         var: "currentCategory",
+      },
+      cat_all_holidays: {
+         el: document.getElementById("cat_all_holidays"),
          var: "currentCategory",
       },
       cat_christmas: {
@@ -538,6 +546,13 @@ function loadLocalList(cat) {
       Object.values(lists).forEach((category) => {
          words.push(...category);
       });
+   } else if (cat == "allHolidays") {
+      words.push(...lists["christmas"]);
+      words.push(...lists["thanksgiving"]);
+      words.push(...lists["valentinesDay"]);
+      words.push(...lists["independenceDay"]);
+      words.push(...lists["newYears"]);
+      words.push(...lists["spring"]);
    } else {
       words = lists[cat];
    }
