@@ -39,6 +39,10 @@ const el = {
          el: document.getElementById("cat_urban_dictionary"),
          var: "currentCategory",
       },
+      cat_nsfw: {
+         el: document.getElementById("cat_nsfw"),
+         var: "currentCategory",
+      },
       cat_food: {
          el: document.getElementById("cat_food"),
          var: "currentCategory",
