@@ -332,7 +332,11 @@
                   </button>
                </span>
                <div class="buttons button-bottom">
-                  <button class="button-secondary" id="how_to_play">
+                  <button
+                     class="button-secondary"
+                     id="how_to_play"
+                     style="visibility: hidden"
+                  >
                      How to Play
                   </button>
                   <!-- <button class="button-secondary" id="test_audio">Test Audio</button> -->
@@ -400,21 +404,11 @@
 
                <span class="winner mt">
                   <label>
-                     <input
-                        type="checkbox"
-                        name="winner"
-                        value="1"
-                        id="winner1"
-                     />
+                     <input type="radio" name="winner" value="1" id="winner1" />
                      <div class="button-radio">Team 1</div>
                   </label>
                   <label>
-                     <input
-                        type="checkbox"
-                        name="winner"
-                        value="2"
-                        id="winner2"
-                     />
+                     <input type="radio" name="winner" value="2" id="winner2" />
                      <div class="button-radio">Team 2</div>
                   </label>
                </span>
