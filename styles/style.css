@@ -15,7 +15,7 @@
 }
 
 body {
-  background: url("background.webp");
+  background: url("background2.webp");
   background-size: 100% 100%;
   background-position-x: 80%;
   margin: auto;
@@ -93,6 +93,17 @@ button,
   aspect-ratio: 1;
 }
 
+.game-settings {
+  background-color: var(--c-dark-25);
+  -webkit-backdrop-filter: blur(20px);
+  padding: 0.375rem;
+  border-radius: 100px;
+}
+.game-settings .button-icon {
+  border: 1px solid var(--c-25);
+  background-color: var(--c-25);
+}
+
 .game-settings,
 #game .button-icon {
   position: absolute;
@@ -114,8 +125,11 @@ button,
 
 .button-radio {
   background-color: var(--c-25);
+  border: 1px solid var(--c-25);
+  -webkit-backdrop-filter: blur(5px);
   color: white;
   padding: 0.5rem 0.75rem;
+  transition: background 500ms cubic-bezier(0.8, 0, 0.2, 1), color 500ms cubic-bezier(0.8, 0, 0.2, 1);
 }
 
 input[type=radio],
@@ -275,7 +289,9 @@ dialog::backdrop {
 #game .timer {
   font-size: 4rem;
   font-weight: 900;
-  background-color: var(--c-10);
+  background-color: var(--c-25);
+  border: 1px solid var(--c-25);
+  -webkit-backdrop-filter: blur(10px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -315,11 +331,8 @@ dialog::backdrop {
 
 @media (max-width: 800px) {
   main {
-    padding: 1rem;
+    padding: 1rem 1rem 4rem;
     height: 100svh;
-  }
-  .game-settings {
-    flex-direction: column;
   }
   .button-bottom {
     bottom: 1rem;

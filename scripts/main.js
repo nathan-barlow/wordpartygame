@@ -13,7 +13,7 @@ const settings = {
    gameDuration: 60,
    pointsToWin: 6,
    showTimer: "true",
-   wordsToGenerate: 25,
+   wordsToGenerate: 50,
    usedWords: {
       urbanDictionary: null,
       food: null,
@@ -264,11 +264,16 @@ function loadSettings() {
 
             // Split the string into an array
             const usedWordsArray = usedWordsString.split(",");
+            const validCharactersRegex = /^[a-zA-Z0-9'"\- ]+$/;
 
             // Assign the array to the settings
-            settings.usedWords[category] = usedWordsArray.map((word) =>
-               atob(word)
-            );
+            settings.usedWords[category] = usedWordsArray.map((word) => {
+               if (validCharactersRegex.test(atob(word))) {
+                  return atob(word);
+               } else {
+                  return word;
+               }
+            });
          } else {
             settings.usedWords[category] = null; // Handle the case where there are no used words
          }

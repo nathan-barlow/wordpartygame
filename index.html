@@ -4,7 +4,7 @@
       <meta charset="UTF-8" />
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-      <link rel="stylesheet" href="styles/style.css" />
+      <link rel="stylesheet" href="styles/style.css?v=2" />
       <link
          rel="stylesheet"
          href="node_modules/bootstrap-icons/font/bootstrap-icons.css"
@@ -342,19 +342,19 @@
                      Clear stored words for selected category
                   </button>
                </span>
-               <div class="buttons button-bottom">
-                  <button
-                     class="button-secondary"
-                     id="how_to_play"
-                     style="visibility: hidden"
-                  >
-                     How to Play
-                  </button>
-                  <!-- <button class="button-secondary" id="test_audio">Test Audio</button> -->
-               </div>
             </div>
 
             <span class="game-settings buttons">
+               <button class="button-icon" id="how_to_play" title="How To Play">
+                  <i class="bi-question-circle"></i>
+               </button>
+               <button
+                  class="button-icon"
+                  id="clear_history"
+                  title="Clear Word History"
+               >
+                  <i class="bi-trash"></i>
+               </button>
                <button class="button-icon" id="test_audio" title="Test Audio">
                   <i class="bi-volume-up"></i>
                </button>
