@@ -13,7 +13,7 @@ const settings = {
    gameDuration: 60,
    pointsToWin: 6,
    showTimer: "true",
-   wordsToGenerate: 50,
+   wordsToGenerate: 25,
    usedWords: {
       urbanDictionary: null,
       food: null,
@@ -235,7 +235,7 @@ function nextRound() {
          alert("Team 2 wins!");
          restartGame(true);
       }
-      el.score.team1.input.checked = false;
+      el.score.team2.input.checked = false;
    }
 
    loadSettings();
@@ -249,13 +249,41 @@ function loadSettings() {
    settings.gameDuration = localStorage.getItem("gameDuration") || 60;
    settings.pointsToWin = localStorage.getItem("pointsToWin") || 6;
    settings.showTimer = localStorage.getItem("showTimer") || "true";
-   settings.usedWords.urbanDictionary =
-      localStorage.getItem("usedWords_urbanDictionary") || null;
-   settings.usedWords.food = localStorage.getItem("usedWords_food") || null;
-   settings.usedWords.everything =
-      localStorage.getItem("usedWords_everything") || null;
-   settings.usedWords.phrases =
-      localStorage.getItem("usedWords_phrases") || null;
+
+   for (const key in el.settings) {
+      if (key.startsWith("cat_")) {
+         const category = el.settings[key].el.value; // Extract the category name
+         let usedWordsString =
+            localStorage.getItem(`usedWords_${category}`) || null;
+
+         if (usedWordsString) {
+            // Remove the first character if it's a comma
+            if (usedWordsString[0] === ",") {
+               usedWordsString = usedWordsString.substring(1);
+            }
+
+            // Split the string into an array
+            const usedWordsArray = usedWordsString.split(",");
+
+            // Assign the array to the settings
+            settings.usedWords[category] = usedWordsArray.map((word) =>
+               atob(word)
+            );
+         } else {
+            settings.usedWords[category] = null; // Handle the case where there are no used words
+         }
+      }
+   }
+
+   console.log(settings.usedWords);
+
+   // settings.usedWords.urbanDictionary =
+   //    localStorage.getItem("usedWords_urbanDictionary") || null;
+   // settings.usedWords.food = localStorage.getItem("usedWords_food") || null;
+   // settings.usedWords.everything =
+   //    localStorage.getItem("usedWords_everything") || null;
+   // settings.usedWords.phrases =
+   //    localStorage.getItem("usedWords_phrases") || null;
 
    el.score.team1.score.innerText = settings.team1_score;
    el.score.team2.score.innerText = settings.team2_score;
@@ -273,6 +301,10 @@ function resetCategory(cat = settings.currentCategory) {
 function addButtonListeners() {
    Object.values(el.button).forEach((button) => {
       button.el.addEventListener("click", () => {
+         if (button.func === "nextRound") {
+            location.reload();
+         }
+
          try {
             eval(button.func + "()");
          } catch (err) {
@@ -371,7 +403,7 @@ async function startGame() {
          );
 
          game.initialize();
-         game.startTimer();
+         await game.startTimer();
          game.nextWord();
       } else if (loadedList == "Not enough unused words available.") {
          el.home_message.container.classList.remove("hide");
@@ -399,13 +431,17 @@ async function endRound(usedWords) {
 
    if (usedWords) {
       let cleanedWords = usedWords.map((word) => {
-         return word.replace(/\s+\(skipped\)$/, "");
+         return btoa(word.replace(/\s+\(skipped\)$/, "").toLowerCase());
       });
+
+      let oldWords = (settings.usedWords[settings.currentCategory] || []).map(
+         (word) => btoa(word.toLowerCase())
+      );
 
       el.game.used_words_container.classList.remove("hide");
       el.game.used_words.innerHTML = "";
       localStorage.setItem("usedWords_" + settings.currentCategory, [
-         settings.usedWords[settings.currentCategory],
+         oldWords,
          ...cleanedWords,
       ]);
       usedWords.map((word) => {
@@ -445,7 +481,7 @@ function restartGame(scoresOnly = false) {
       ) {
          localStorage.setItem("team1_score", 0);
          localStorage.setItem("team2_score", 0);
-         localStorage.setItem("currentCategory", null);
+         localStorage.setItem("currentCategory", "");
          localStorage.setItem("gameDuration", 60);
          localStorage.setItem("pointsToWin", 6);
 
@@ -479,14 +515,14 @@ function addToActiveList(newWords) {
    let used = settings.usedWords[settings.currentCategory] || [];
 
    if (typeof newWords === "string") {
-      if (!used.includes(newWords)) {
+      if (!used.includes(newWords.toLowerCase())) {
          wordsList.push(newWords);
       } else {
          console.log("REPEAT WORD");
       }
    } else if (typeof newWords === "object") {
       newWords.map((word) => {
-         if (!used.includes(word)) {
+         if (!used.includes(word.toLowerCase())) {
             wordsList.push(word);
          } else {
             console.log("REPEAT WORD");
@@ -522,8 +558,6 @@ async function loadUrbanDictionary() {
    try {
       let words = await fetchUrbanDictionary();
 
-      console.log(typeof words);
-
       if (typeof words === "object") {
          addToActiveList(words);
       } else {
@@ -532,7 +566,6 @@ async function loadUrbanDictionary() {
 
       if (wordsList.length <= settings.wordsToGenerate) {
          settings.apiCallLimit--;
-         console.log(settings.apiCallLimit);
          return await loadUrbanDictionary();
       } else {
          return wordsList;
@@ -561,7 +594,7 @@ function loadLocalList(cat) {
       words = lists[cat];
    }
 
-   if (words.length > settings.wordsToGenerate) {
+   if (words.length >= settings.wordsToGenerate) {
       const shuffled = words.slice();
 
       while (wordsList.length < settings.wordsToGenerate) {
