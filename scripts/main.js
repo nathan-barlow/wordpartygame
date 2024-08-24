@@ -272,9 +272,13 @@ function loadSettings() {
 
             // Assign the array to the settings
             settings.usedWords[category] = usedWordsArray.map((word) => {
-               if (validCharactersRegex.test(atob(word))) {
-                  return atob(word);
-               } else {
+               try {
+                  if (validCharactersRegex.test(atob(word))) {
+                     return atob(word);
+                  } else {
+                     return word;
+                  }
+               } catch {
                   return word;
                }
             });
@@ -285,14 +289,6 @@ function loadSettings() {
    }
 
    console.log(settings.usedWords);
-
-   // settings.usedWords.urbanDictionary =
-   //    localStorage.getItem("usedWords_urbanDictionary") || null;
-   // settings.usedWords.food = localStorage.getItem("usedWords_food") || null;
-   // settings.usedWords.everything =
-   //    localStorage.getItem("usedWords_everything") || null;
-   // settings.usedWords.phrases =
-   //    localStorage.getItem("usedWords_phrases") || null;
 
    el.score.team1.score.innerText = settings.team1_score;
    el.score.team2.score.innerText = settings.team2_score;
