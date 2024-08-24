@@ -12,7 +12,7 @@ const settings = {
    currentCategory: null,
    gameDuration: 60,
    pointsToWin: 6,
-   showTimer: "true",
+   showTimer: "false",
    wordsToGenerate: 50,
    usedWords: {
       urbanDictionary: null,
@@ -252,7 +252,7 @@ function loadSettings() {
    settings.currentCategory = localStorage.getItem("currentCategory") || null;
    settings.gameDuration = localStorage.getItem("gameDuration") || 60;
    settings.pointsToWin = localStorage.getItem("pointsToWin") || 6;
-   settings.showTimer = localStorage.getItem("showTimer") || "true";
+   settings.showTimer = localStorage.getItem("showTimer") || "false";
 
    for (const key in el.settings) {
       if (key.startsWith("cat_")) {
