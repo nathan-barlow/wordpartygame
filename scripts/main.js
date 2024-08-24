@@ -193,6 +193,10 @@ const el = {
          el: document.getElementById("next_round"),
          func: "nextRound",
       },
+      clear_history: {
+         el: document.getElementById("clear_history"),
+         func: "clearHistory",
+      },
    },
    audio: {
       timer: new AudioContext(),
@@ -494,6 +498,25 @@ function restartGame(scoresOnly = false) {
 
          location.reload();
          return false;
+      }
+   }
+}
+
+function clearHistory() {
+   if (
+      confirm(
+         "Are you sure you want to clear word history? This will clear ALL of the words you've used and may result in you receiving words you've already seen."
+      )
+   ) {
+      // Loop through all keys in localStorage
+      for (let i = 0; i < localStorage.length; i++) {
+         const key = localStorage.key(i);
+
+         // Check if the key starts with "usedWords_"
+         if (key.startsWith("usedWords_")) {
+            // Remove the item from localStorage
+            localStorage.removeItem(key);
+         }
       }
    }
 }
