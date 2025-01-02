@@ -3,6 +3,7 @@ import lists from "./lists.js";
 
 let game;
 let wordsList = [];
+let definitions = {};
 
 document.addEventListener("DOMContentLoaded", start);
 
@@ -147,6 +148,9 @@ const el = {
    game: {
       current_category: document.getElementById("current_category"),
       current_word: document.getElementById("current_word"),
+      current_word_definition: document.getElementById(
+         "current_word_definition"
+      ),
       used_words_container: document.getElementById("used_words_container"),
       used_words: document.getElementById("used_words"),
       timer_container: document.getElementById("timer_container"),
@@ -177,10 +181,10 @@ const el = {
          el: document.getElementById("pause_game"),
          func: "pauseGame",
       },
-      skip_word: {
-         el: document.getElementById("skip_word"),
-         func: "skipWord",
-      },
+      // skip_word: {
+      //    el: document.getElementById("skip_word"),
+      //    func: "skipWord",
+      // },
       next_word: {
          el: document.getElementById("next_word"),
          func: "nextWord",
@@ -211,7 +215,7 @@ function start() {
    addSettingListeners();
 }
 
-function nextRound() {
+async function nextRound() {
    el.section.home.classList.remove("hide");
    el.section.game.classList.add("hide");
    el.section.round_end.classList.add("hide");
@@ -222,7 +226,7 @@ function nextRound() {
       localStorage.setItem("team1_score", newScore);
 
       if (newScore >= settings.pointsToWin) {
-         el.audio.winner.play();
+         await el.audio.winner.play();
          alert("Team 1 wins!");
          restartGame(true);
       }
@@ -235,7 +239,7 @@ function nextRound() {
       localStorage.setItem("team2_score", newScore);
 
       if (newScore >= settings.pointsToWin) {
-         el.audio.winner.play();
+         await el.audio.winner.play();
          alert("Team 2 wins!");
          restartGame(true);
       }
@@ -381,6 +385,8 @@ async function loadList() {
 
 async function startGame() {
    if (settings.currentCategory != null) {
+      el.button.start_game.el.disabled = true;
+
       el.home_message.container.classList.remove("hide");
       el.home_message.text.innerText = "Loading words...";
 
@@ -404,12 +410,15 @@ async function startGame() {
             el.game,
             endRound,
             el.audio.timer,
-            settings.showTimer
+            settings.showTimer,
+            definitions
          );
 
          game.initialize();
          await game.startTimer();
-         game.nextWord();
+         game.nextWord(true);
+
+         el.button.start_game.el.disabled = false;
       } else if (loadedList == "Not enough unused words available.") {
          el.home_message.container.classList.remove("hide");
          el.home_message.text.innerText = "Not enough unused words available.";
@@ -527,9 +536,9 @@ function pauseGame() {
    }
 }
 
-function skipWord() {
-   game.skipWord();
-}
+// function skipWord() {
+//    game.skipWord();
+// }
 
 function nextWord() {
    game.nextWord();
@@ -564,8 +573,7 @@ async function fetchUrbanDictionary() {
          console.error("Network response was not ok");
       }
       let data = await response.json();
-      let words = data.list.map((def) => def.word);
-      return words;
+      return data;
    } catch (error) {
       console.error("Error loading from Urban Dictionary - " + error);
       return "Error loading from Urban Dictionary - " + error;
@@ -580,7 +588,15 @@ async function loadUrbanDictionary() {
       return "API call limit reached and not enough words have been retrieved.";
    }
    try {
-      let words = await fetchUrbanDictionary();
+      let data = await fetchUrbanDictionary();
+      let words = data.list.map((def) => def.word);
+
+      data.list.forEach((def) => {
+         definitions[def.word] = {
+            definition: def.definition,
+            example: def.example,
+         };
+      });
 
       if (typeof words === "object") {
          addToActiveList(words);

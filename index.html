@@ -107,7 +107,9 @@
                         id="cat_nsfw"
                         data-name="NSFW"
                      />
-                     <div class="button-radio">NSFW</div>
+                     <div class="button-radio">
+                        NSFW<span class="warning">(18+)</span>
+                     </div>
                   </label>
                </span>
 
@@ -390,18 +392,21 @@
                </span>
 
                <div class="card mt">
-                  <p id="current_word"></p>
+                  <div class="current-word">
+                     <p id="current_word"></p>
+                     <p id="current_word_definition" class="hide"></p>
+                  </div>
                   <button class="button-icon" id="pause_game">
                      <i class="bi-pause"></i>
                   </button>
                </div>
 
                <div class="buttons mt">
-                  <button class="button-primary button-red" id="skip_word">
+                  <!-- <button class="button-primary button-red" id="skip_word">
                      <i class="bi bi-slash-circle"></i> Skip
-                  </button>
+                  </button> -->
                   <button class="button-primary" id="next_word">
-                     Next <i class="bi-fast-forward-fill"></i>
+                     Next Word <i class="bi-fast-forward-fill"></i>
                   </button>
                </div>
             </span>
@@ -436,7 +441,7 @@
             </div>
 
             <button class="button-primary mt" id="next_round">
-               Next Round
+               Pick Next Category...
             </button>
          </section>
       </main>

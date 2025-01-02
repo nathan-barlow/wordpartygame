@@ -7,6 +7,14 @@
   --br: 10px;
 }
 
+@keyframes secondaryTimer {
+  0% {
+    transform: scaleX(1);
+  }
+  100% {
+    transform: scaleX(0);
+  }
+}
 * {
   box-sizing: border-box;
   -webkit-user-select: none;
@@ -148,11 +156,33 @@ input[type=radio],
 input[type=checkbox] {
   display: none;
 }
+input[type=radio] ~ div,
+input[type=checkbox] ~ div {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding-inline: 0 1.25rem;
+  transition: background 500ms cubic-bezier(0.8, 0, 0.2, 1), color 500ms cubic-bezier(0.8, 0, 0.2, 1), padding 0.25s cubic-bezier(0.8, 0, 0.2, 1);
+}
+input[type=radio] ~ div::before,
+input[type=checkbox] ~ div::before {
+  content: "\f26e";
+  font-family: "bootstrap-icons";
+  transform: translateX(20px);
+  opacity: 0;
+  transition: transform 0.25s cubic-bezier(0.8, 0, 0.2, 1), opacity 0.25s cubic-bezier(0.8, 0, 0.2, 1);
+}
 
 input[type=radio]:checked ~ div,
 input[type=checkbox]:checked ~ div {
   background-color: white;
   color: black;
+  padding-inline: 0.5rem 0.75rem;
+}
+input[type=radio]:checked ~ div::before,
+input[type=checkbox]:checked ~ div::before {
+  opacity: 1;
+  transform: translateX(2px);
 }
 
 .scores .team span {
@@ -289,12 +319,15 @@ dialog::backdrop {
   align-items: center;
   clear: both;
 }
+#game #current_word_definition {
+  margin-top: 0.75rem;
+  font-size: 0.75rem;
+}
 #game .game-main {
   width: 100%;
 }
 #game .card {
   font-size: 1.5rem;
-  align-items: center;
   justify-content: center;
 }
 #game .timer {
@@ -323,6 +356,21 @@ dialog::backdrop {
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
+  padding: 1.25rem;
+  position: relative;
+  overflow: hidden;
+}
+#game #next_word::after {
+  content: "";
+  position: absolute;
+  background-color: rgb(190, 126, 255);
+  bottom: 0;
+  height: 3px;
+  width: 100%;
+  transform-origin: left;
+}
+#game #next_word.start-timer::after {
+  animation: secondaryTimer 3s linear forwards;
 }
 
 #round_end .card {
@@ -372,20 +420,5 @@ dialog::backdrop {
   }
   main {
     padding-bottom: 8rem;
-  }
-}
-@media (hover: none) {
-  #home .categories {
-    justify-content: flex-start;
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    scrollbar-width: none;
-    white-space: nowrap;
-  }
-  #home .categories::-webkit-scrollbar {
-    display: none;
-  }
-  #home .categories label {
-    flex: 0 0 auto;
   }
 }/*# sourceMappingURL=style.css.map */
